@@ -1,4 +1,4 @@
-package com.evanbuss.shopapi.message.response;
+package com.evanbuss.shopapi.message.response.auth;
 
 public class SuccessfulAuth {
 

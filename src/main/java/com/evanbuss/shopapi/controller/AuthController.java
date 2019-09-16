@@ -1,8 +1,8 @@
 package com.evanbuss.shopapi.controller;
 
-import com.evanbuss.shopapi.message.request.LoginRequest;
-import com.evanbuss.shopapi.message.request.SignUpRequest;
-import com.evanbuss.shopapi.message.response.SuccessfulAuth;
+import com.evanbuss.shopapi.message.request.auth.LoginRequest;
+import com.evanbuss.shopapi.message.request.auth.SignUpRequest;
+import com.evanbuss.shopapi.message.response.auth.SuccessfulAuth;
 import com.evanbuss.shopapi.models.Role;
 import com.evanbuss.shopapi.models.RoleName;
 import com.evanbuss.shopapi.models.User;
@@ -17,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,6 +53,7 @@ public class AuthController {
 
   @PostMapping("/signin")
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest request) {
+
     Authentication authentication =
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
@@ -64,6 +66,7 @@ public class AuthController {
 
   @PostMapping("/signup")
   public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+
     if (userRepository.existsByEmail(signUpRequest.getEmail())) {
       return new ResponseEntity<>("Fail -> Email is already in use!", HttpStatus.BAD_REQUEST);
     }

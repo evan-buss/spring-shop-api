@@ -1,4 +1,4 @@
-package com.evanbuss.shopapi.message.request;
+package com.evanbuss.shopapi.message.request.auth;
 
 import javax.validation.constraints.NotBlank;
 

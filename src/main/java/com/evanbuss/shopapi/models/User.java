@@ -1,9 +1,13 @@
 package com.evanbuss.shopapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
@@ -14,9 +18,17 @@ public class User {
   public Long id;
 
   private String username;
-  private String email;
+  @Email private String email;
+
+  @Size(min = 6)
+  @JsonIgnore
   private String password;
 
+  @JsonIgnore
+  @OneToOne(fetch = FetchType.LAZY)
+  private Family family;
+
+  @JsonIgnore
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "user_roles",
@@ -70,5 +82,13 @@ public class User {
 
   public void setRoles(Set<Role> roles) {
     this.roles = roles;
+  }
+
+  public Family getFamily() {
+    return family;
+  }
+
+  public void setFamily(Family family) {
+    this.family = family;
   }
 }

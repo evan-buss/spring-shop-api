@@ -13,9 +13,13 @@ import com.evanbuss.shopapi.security.UserPrinciple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.datetime.joda.DateTimeParser;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 
 @Component
@@ -29,16 +33,18 @@ public class JwtProvider {
   @Value("${evanbuss.app.jwtExpiration}")
   private int jwtExpiration;
 
+  //  Generate token via authentication object (Used for sign-ins)
   public String generateJwtToken(Authentication authentication) {
     UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
 
     return JWT.create()
-        .withSubject(userPrinciple.getUsername())
+        .withSubject(userPrinciple.getEmail())
         .withIssuedAt(new Date())
-        .withExpiresAt(new Date(new Date().getTime() + jwtExpiration))
+        .withExpiresAt(new Date((new Date().getTime() + jwtExpiration)))
         .sign(Algorithm.HMAC256(jwtSecret));
   }
 
+  //  Generate token via User object (Used for sign-ups)
   public String generateJWTToken(User user) {
     return JWT.create()
         .withSubject(user.getEmail())

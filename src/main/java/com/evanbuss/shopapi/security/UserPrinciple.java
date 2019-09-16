@@ -15,13 +15,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class UserPrinciple implements UserDetails {
 
   private static final long serialVersionUID = 1L;
-
   private final Long id;
-
   private final String username;
-
   private final String email;
-
   @JsonIgnore private final String password;
 
   private final Collection<? extends GrantedAuthority> authorities;
@@ -39,7 +35,7 @@ public class UserPrinciple implements UserDetails {
     this.authorities = authorities;
   }
 
-  public static UserPrinciple build(User user) {
+  static UserPrinciple build(User user) {
     List<GrantedAuthority> authorities =
         user.getRoles().stream()
             .map(role -> new SimpleGrantedAuthority(role.getName().name()))

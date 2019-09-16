@@ -49,6 +49,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     return new BCryptPasswordEncoder();
   }
 
+  //  Basically, authenticate every route except sign-in/up
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.cors()
@@ -67,6 +68,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+//    Use the custom JWT filter before the standard filter
     http.addFilterBefore(
         authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
   }

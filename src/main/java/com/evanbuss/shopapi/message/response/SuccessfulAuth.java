@@ -1,11 +1,10 @@
 package com.evanbuss.shopapi.message.response;
 
-public class JwtResponse {
+public class SuccessfulAuth {
 
   private String token;
-  private String type = "Bearer";
 
-  public JwtResponse(String accessToken) {
+  public SuccessfulAuth(String accessToken) {
     this.token = accessToken;
   }
 
@@ -15,13 +14,5 @@ public class JwtResponse {
 
   public void setAccessToken(String accessToken) {
     this.token = accessToken;
-  }
-
-  public String getTokenType() {
-    return type;
-  }
-
-  public void setTokenType(String tokenType) {
-    this.type = tokenType;
   }
 }

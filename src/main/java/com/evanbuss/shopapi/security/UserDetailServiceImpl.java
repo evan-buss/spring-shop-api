@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
 
+//  TODO: DI via constructor
   @Autowired UserRepository userRepository;
 
   @Override

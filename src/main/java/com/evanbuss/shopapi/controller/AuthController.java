@@ -2,7 +2,7 @@ package com.evanbuss.shopapi.controller;
 
 import com.evanbuss.shopapi.message.request.LoginRequest;
 import com.evanbuss.shopapi.message.request.SignUpRequest;
-import com.evanbuss.shopapi.message.response.JwtResponse;
+import com.evanbuss.shopapi.message.response.SuccessfulAuth;
 import com.evanbuss.shopapi.models.Role;
 import com.evanbuss.shopapi.models.RoleName;
 import com.evanbuss.shopapi.models.User;
@@ -30,15 +30,25 @@ import java.util.Set;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-  @Autowired AuthenticationManager authenticationManager;
+  private final AuthenticationManager authenticationManager;
+  private final UserRepository userRepository;
+  private final RoleRepository roleRepository;
+  private final PasswordEncoder encoder;
+  private final JwtProvider jwtProvider;
 
-  @Autowired UserRepository userRepository;
-
-  @Autowired RoleRepository roleRepository;
-
-  @Autowired PasswordEncoder encoder;
-
-  @Autowired JwtProvider jwtProvider;
+  @Autowired
+  public AuthController(
+      AuthenticationManager authenticationManager,
+      UserRepository userRepository,
+      RoleRepository roleRepository,
+      PasswordEncoder encoder,
+      JwtProvider jwtProvider) {
+    this.authenticationManager = authenticationManager;
+    this.userRepository = userRepository;
+    this.roleRepository = roleRepository;
+    this.encoder = encoder;
+    this.jwtProvider = jwtProvider;
+  }
 
   @PostMapping("/signin")
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest request) {
@@ -49,18 +59,13 @@ public class AuthController {
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     String jwt = jwtProvider.generateJwtToken(authentication);
-    return ResponseEntity.ok(new JwtResponse(jwt));
+    return ResponseEntity.ok(new SuccessfulAuth(jwt));
   }
 
   @PostMapping("/signup")
-  public ResponseEntity<String> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+  public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
     if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-      return new ResponseEntity<String>(
-          "Fail -> Username is already taken!", HttpStatus.BAD_REQUEST);
-    }
-
-    if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-      return new ResponseEntity<String>("Fail -> Email is already in use!", HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>("Fail -> Email is already in use!", HttpStatus.BAD_REQUEST);
     }
 
     // Creating user's account
@@ -76,15 +81,6 @@ public class AuthController {
     strRoles.forEach(
         role -> {
           switch (role) {
-            case "member":
-              Role adminRole =
-                  roleRepository
-                      .findByName(RoleName.ROLE_MEMBER)
-                      .orElseThrow(
-                          () -> new RuntimeException("Fail! -> Cause: User Role not find."));
-              roles.add(adminRole);
-
-              break;
             case "owner":
               Role pmRole =
                   roleRepository
@@ -94,6 +90,7 @@ public class AuthController {
               roles.add(pmRole);
 
               break;
+            case "member":
             default:
               Role userRole =
                   roleRepository
@@ -109,6 +106,6 @@ public class AuthController {
 
     String token = jwtProvider.generateJWTToken(user);
 
-    return ResponseEntity.ok().body(token);
+    return ResponseEntity.ok(new SuccessfulAuth(token));
   }
 }

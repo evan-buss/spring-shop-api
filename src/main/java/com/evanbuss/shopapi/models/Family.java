@@ -3,6 +3,7 @@ package com.evanbuss.shopapi.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 
 @Entity
 public class Family {
@@ -18,7 +19,9 @@ public class Family {
   @JoinColumn(name = "user_id", nullable = false)
   private User owner;
 
-  // @OneToMany private List<List> lists;
+  @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+  @OneToMany(mappedBy = "family", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private java.util.List<List> lists = new ArrayList<>();
 
   //  Default constructor for hibernate
   public Family() {}
@@ -52,13 +55,11 @@ public class Family {
     this.owner = owner;
   }
 
+  public java.util.List<List> getLists() {
+    return lists;
+  }
 
-
-  // public List<List> getLists() {
-  //  return lists;
-  // }
-  //
-  // public void setLists(List<List> lists) {
-  //  this.lists = lists;
-  // }
+  public void setLists(java.util.List<List> lists) {
+    this.lists = lists;
+  }
 }

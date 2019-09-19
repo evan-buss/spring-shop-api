@@ -1,6 +1,7 @@
 package com.evanbuss.shopapi.models;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 public class List {
@@ -9,9 +10,25 @@ public class List {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
+  @NotBlank
   private String title;
   private String description;
-  @OneToMany private java.util.List<Item> items;
+
+  @ManyToOne
+  @JoinColumn
+  Family family;
+
+  @OneToMany(mappedBy = "list", cascade = CascadeType.ALL)
+  private java.util.List<Item> items;
+
+  public List() {
+  }
+
+  public List(String title, String description, Family family) {
+    this.title = title;
+    this.description = description;
+    this.family = family;
+  }
 
   public Long getId() {
     return id;

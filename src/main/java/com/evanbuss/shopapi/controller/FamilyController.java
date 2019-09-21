@@ -1,5 +1,6 @@
 package com.evanbuss.shopapi.controller;
 
+import com.evanbuss.shopapi.ResponseError;
 import com.evanbuss.shopapi.message.request.family.CreateFamilyRequest;
 import com.evanbuss.shopapi.models.Family;
 import com.evanbuss.shopapi.models.User;
@@ -34,7 +35,7 @@ public class FamilyController {
     User user = ((UserPrinciple) authentication.getPrincipal()).getUser();
 
     if (user.getFamily() == null) {
-      return ResponseEntity.badRequest().body("You aren't part of a family");
+      return ResponseEntity.badRequest().body(ResponseError.NO_FAMILY);
     }
 
     Optional<Family> family = familyRepository.findById(user.getFamily().getId());
@@ -50,12 +51,12 @@ public class FamilyController {
     User user = ((UserPrinciple) authentication.getPrincipal()).getUser();
 
     if (user.getFamily() == null) {
-      return ResponseEntity.badRequest().body("You aren't part of a family");
+      return ResponseEntity.badRequest().body(ResponseError.NO_FAMILY);
     }
 
     List<User> familyMembers = userRepository.findAllByFamilyId(user.getFamily().getId());
     if (familyMembers == null) {
-      return ResponseEntity.badRequest().body("You are not part of a family.");
+      return ResponseEntity.badRequest().body(ResponseError.NO_FAMILY);
     }
     return ResponseEntity.ok(familyMembers);
   }
@@ -93,7 +94,7 @@ public class FamilyController {
     Optional<Family> family = familyRepository.findById(Long.parseLong(familyID));
 
     if (family.isEmpty()) {
-      return ResponseEntity.badRequest().body("Could not locate family");
+      return ResponseEntity.badRequest().body(ResponseError.NO_FAMILY);
     }
 
     user.setFamily(family.get());

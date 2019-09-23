@@ -1,9 +1,11 @@
 package com.evanbuss.shopapi.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.Date;
 
 @Entity
 public class Item {
@@ -21,10 +23,19 @@ public class Item {
   private String name;
   private String description;
 
+  @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+  @ManyToOne(fetch = FetchType.EAGER, optional = false)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User creator;
+
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date creation = new Date();
+
   public Item() {
   }
 
-  public Item(List list, String name, String description) {
+  public Item(User user, List list, String name, String description) {
+    this.creator = user;
     this.list = list;
     this.name = name;
     this.description = description;
@@ -60,5 +71,17 @@ public class Item {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public User getCreator() {
+    return creator;
+  }
+
+  public void setCreator(User creator) {
+    this.creator = creator;
+  }
+
+  public Date getCreation() {
+    return creation;
   }
 }

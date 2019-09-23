@@ -1,5 +1,7 @@
 package com.evanbuss.shopapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
@@ -14,9 +16,10 @@ public class List {
   private String title;
   private String description;
 
+  @JsonIgnore
   @ManyToOne
   @JoinColumn
-  Family family;
+  private Family family;
 
   @OneToMany(mappedBy = "list", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private java.util.List<Item> items;
@@ -60,5 +63,13 @@ public class List {
 
   public void setItems(java.util.List<Item> items) {
     this.items = items;
+  }
+
+  public Family getFamily() {
+    return family;
+  }
+
+  public void setFamily(Family family) {
+    this.family = family;
   }
 }

@@ -15,6 +15,7 @@ public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
 
   private static final Logger logger = LoggerFactory.getLogger(JwtAuthTokenFilter.class);
 
+  // Used when the user is not authorized
   @Override
   public void commence(
       HttpServletRequest request,

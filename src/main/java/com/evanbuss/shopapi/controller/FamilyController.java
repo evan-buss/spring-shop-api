@@ -61,7 +61,7 @@ public class FamilyController {
     return ResponseEntity.ok(familyMembers);
   }
 
-  // Only for testing purposes
+  // FIXME: Only for testing purposes
   @GetMapping("/meta")
   public String getMeta(Authentication authentication) {
     Long id = ((UserPrinciple) authentication.getPrincipal()).getId();

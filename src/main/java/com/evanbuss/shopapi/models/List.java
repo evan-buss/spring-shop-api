@@ -18,7 +18,7 @@ public class List {
   @JoinColumn
   Family family;
 
-  @OneToMany(mappedBy = "list", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "list", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private java.util.List<Item> items;
 
   public List() {

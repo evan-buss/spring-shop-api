@@ -1,7 +1,7 @@
 package com.evanbuss.shopapi.controller;
 
+import com.evanbuss.shopapi.ResponseError;
 import com.evanbuss.shopapi.message.request.list.CreateListRequest;
-import com.evanbuss.shopapi.models.Family;
 import com.evanbuss.shopapi.models.List;
 import com.evanbuss.shopapi.models.User;
 import com.evanbuss.shopapi.repository.FamilyRepository;
@@ -13,19 +13,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/list")
 public class ListController {
 
-  ListRepository listRepository;
-  FamilyRepository familyRepository;
+  private ListRepository listRepository;
 
   @Autowired
   public ListController(ListRepository listRepository, FamilyRepository familyRepository) {
     this.listRepository = listRepository;
-    this.familyRepository = familyRepository;
   }
 
   @PostMapping
@@ -33,22 +30,14 @@ public class ListController {
       @RequestBody @Valid CreateListRequest request, Authentication authentication) {
     User user = ((UserPrinciple) authentication.getPrincipal()).getUser();
 
+    // User doesn't have a family...
     if (user.getFamily() == null) {
-      return ResponseEntity.badRequest().body("Please create a family first.");
+      return ResponseEntity.badRequest().body(ResponseError.NO_FAMILY);
     }
     // Create new list
     List newList = new List(request.getTitle(), request.getDescription(), user.getFamily());
-
-    Optional<Family> famOpt = familyRepository.findById(user.getFamily().getId());
-    if (famOpt.isEmpty()) {
-      return ResponseEntity.badRequest().body("Please create a family first.");
-    }
-    Family family = famOpt.get();
-    family.getLists().add(newList);
-
-    familyRepository.save(family);
-
-    return ResponseEntity.ok(newList);
+    List savedList = listRepository.save(newList);
+    return ResponseEntity.ok(savedList);
   }
 
   @GetMapping

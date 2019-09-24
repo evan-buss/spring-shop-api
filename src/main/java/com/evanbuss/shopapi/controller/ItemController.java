@@ -31,10 +31,12 @@ public class ItemController {
 
   @GetMapping(params = "list")
   public ResponseEntity<?> getListItems(@RequestParam long list, Authentication authentication) {
-    Optional<List> requestedList = listRepository.findById(list);
-    if (requestedList.isPresent()
-        && userIsMemberOfFamily(requestedList.get().getFamily(), authentication)) {
-      return ResponseEntity.ok(requestedList.get());
+    boolean listExists = listRepository.existsById(list);
+    //TODO: Validate authorization
+
+    if (listExists) {
+      java.util.List<Item> items = itemRepository.getAllByListId(list);
+      return ResponseEntity.ok(items);
     }
     return ResponseEntity.notFound().build();
   }
@@ -63,7 +65,13 @@ public class ItemController {
       return ResponseEntity.notFound().build();
     }
 
-    Item item = new Item(user, list.get(), itemRequest.getTitle(), itemRequest.getDescription());
+    Item item =
+        new Item(
+            user,
+            list.get(),
+            itemRequest.getTitle(),
+            itemRequest.getDescription(),
+            itemRequest.getImage());
     Item newItem = itemRepository.save(item);
 
     return ResponseEntity.ok(newItem);

@@ -31,14 +31,17 @@ public class Item {
   @Temporal(TemporalType.TIMESTAMP)
   private Date creation = new Date();
 
+  private byte[] image;
+
   public Item() {
   }
 
-  public Item(User user, List list, String name, String description) {
+  public Item(User user, List list, String name, String description, byte[] image) {
     this.creator = user;
     this.list = list;
     this.name = name;
     this.description = description;
+    this.image = image;
   }
 
   public Long getId() {
@@ -83,5 +86,13 @@ public class Item {
 
   public Date getCreation() {
     return creation;
+  }
+
+  public byte[] getImage() {
+    return image;
+  }
+
+  public void setImage(byte[] image) {
+    this.image = image;
   }
 }

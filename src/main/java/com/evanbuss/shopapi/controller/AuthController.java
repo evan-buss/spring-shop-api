@@ -8,6 +8,7 @@ import com.evanbuss.shopapi.models.RoleName;
 import com.evanbuss.shopapi.models.User;
 import com.evanbuss.shopapi.repository.RoleRepository;
 import com.evanbuss.shopapi.repository.UserRepository;
+import com.evanbuss.shopapi.security.UserPrinciple;
 import com.evanbuss.shopapi.security.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -59,8 +60,10 @@ public class AuthController {
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
-    String jwt = jwtProvider.generateJwtToken(authentication);
-    return ResponseEntity.ok(new SuccessfulAuth(jwt));
+    User user = ((UserPrinciple) authentication.getPrincipal()).getUser();
+
+    String token = jwtProvider.generateJwtToken(authentication);
+    return ResponseEntity.ok(new SuccessfulAuth(user.getId(), token, user.getUsername()));
   }
 
   @PostMapping("/signup")
@@ -108,6 +111,6 @@ public class AuthController {
 
     String token = jwtProvider.generateJWTToken(user);
 
-    return ResponseEntity.ok(new SuccessfulAuth(token));
+    return ResponseEntity.ok(new SuccessfulAuth(user.getId(), token, user.getUsername()));
   }
 }

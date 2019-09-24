@@ -9,6 +9,7 @@ public class CreateItemRequest {
   @NotBlank
   private String title;
   private String description;
+  private byte[] image;
 
   public long getListID() {
     return listID;
@@ -32,5 +33,13 @@ public class CreateItemRequest {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public byte[] getImage() {
+    return image;
+  }
+
+  public void setImage(byte[] image) {
+    this.image = image;
   }
 }
